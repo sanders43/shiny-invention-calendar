@@ -19,21 +19,40 @@ $(document).ready(function(){
     }
   })
 
-let getDateAndTime = () => {
+const getDateAndTime = () => {
     $("#currentDay").text(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
 }
 getDateAndTime();
 // Update time without refreshing page
 setInterval(getDateAndTime, 1000);
 
+const getInt = (hours) => {
+  switch(hours) {
+    case "9 AM": return 9;
+    case "10 AM": return 10;
+    case "11 AM": return 11;
+    case "12 PM": return 12;
+    case "1 PM": return 13;
+    case "2 PM": return 14;
+    case "3 PM": return 15;
+    case "4 PM": return 16;
+    case "5 PM": return 17;
+  }
+}
+
 let i = 1;
 for(const property in workDay) {
   let task = "#task" + i;
+  console.log(task)
   $(task).text(workDay[property]);
   let timeVal = "#time" + i;
+  console.log(timeVal)
   let presentHour = moment().hour();
+  console.log(presentHour)
   let timeString = $(timeVal).text();
-  let timeInt = getInt(timeString);  
+  console.log(timeString)
+  let timeInt = getInt(timeString);
+  console.log(timeInt)  
   if(timeInt < presentHour) {
     $(task).addClass("past");
   } else if (timeInt > presentHour) {
@@ -44,8 +63,6 @@ for(const property in workDay) {
   i ++;
 }
   
-  
-  
   $("button").click(function() {
     value = $(this).siblings("textarea").val();
     hours = $(this).siblings("div").text();
@@ -53,48 +70,27 @@ for(const property in workDay) {
     saveSchedule(hours, value);
   });
 
-  function getInt(hours) {
-    switch(hours) {
-      case "9 AM": return 9;
-      case "10 AM": return 10;
-      case "11 AM": return 11;
-      case "12 PM": return 12;
-      case "1 PM": return 13;
-      case "2 PM": return 14;
-      case "3 PM": return 15;
-      case "4 PM": return 16;
-      case "5 PM": return 17;
-    }
-  }
-
-  function loadTasks() {
-    result = localStorage.getItem('workDay')
-    return (result ? result : workDay);
-  }
-  loadTasks();
-  
-  function initializeLocalStorage() {
+  const initLocal = () => {
     localStorage.setItem('workDay', JSON.stringify(workDay));
   };
   
-  function saveTasks(dayObj) {
+  const saveLocal = (dayObj) => {
     localStorage.setItem('workDay', JSON.stringify(dayObj));
   }
   
-  function saveSchedule(hours, val) {
+  const saveSchedule = (hours, val) => {
     if(!localStorage.getItem('workDay')) {
-      initializeLocalStorage();
+      initLocal();
     }
   
     let workHours = JSON.parse(localStorage.getItem('workDay'));
     workHours[hours] = val
-  
-    saveTasks(workHours);
+    saveLocal(workHours);
   }
   
-  function updateCalendarTasks(dayObject) {
+  const updateCalendarTasks = (dayObject) => {
     $(".calendar-row").each(function(index) {
-      let res = $(this).children("div");
-      $(this).children("textarea").text(dayObject[res.text()]);
+      let response = $(this).children("div");
+      $(this).children("textarea").text(dayObject[response.text()]);
     })
   }
